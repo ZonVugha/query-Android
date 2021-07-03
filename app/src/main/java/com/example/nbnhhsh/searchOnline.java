@@ -1,13 +1,18 @@
 package com.example.nbnhhsh;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -35,6 +40,9 @@ public class searchOnline extends AppCompatActivity {
     private Button btnFind;
     private Button btnLocal;
     private Button btnOnline;
+    Handler handler = new Handler();
+    private AudioManager manager;
+    private MediaPlayer turnUFKMusicDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,14 @@ public class searchOnline extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.more);
         }
         initView();
+        handler.postDelayed(runnable,1000);
+        manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        turnUFKMusicDown = MediaPlayer.create(this,R.raw.turnufkmusicdown);
+        turnUFKMusicDown.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//        循环
+//        turnUFKMusicDown.setLooping(true);
+//        使用线程
+        handler.postDelayed(runnable,1000);
 
         //        本地查询
         btnLocal.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +142,38 @@ public class searchOnline extends AppCompatActivity {
         }
         return true;
     }
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                handler.postDelayed(this, 1000);
+                if (manager.isMusicActive()){
+                    Log.d("TAG", "online 设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                    if (manager.getStreamVolume(AudioManager.STREAM_MUSIC)>=10){
+                        manager.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                        Toast.makeText(getApplicationContext(), "TURN YOU FUCKING MUSIC DOWN!!!", Toast.LENGTH_LONG).show();
+                        turnUFKMusicDown.start();
+                    }
+                }else {
+                    Log.d("TAG", "online no music and 设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        handler.postDelayed(runnable,1000);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(runnable);
+        turnUFKMusicDown.pause();
+    }
     private void initView() {
         mdrOnline = (DrawerLayout) findViewById(R.id.mdrOnline);
         tvTitle = (TextView) findViewById(R.id.tvTitle);

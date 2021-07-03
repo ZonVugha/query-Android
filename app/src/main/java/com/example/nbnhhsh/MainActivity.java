@@ -1,10 +1,18 @@
 package com.example.nbnhhsh;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +29,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
     private MySQLite mySQLite;
     private SQLiteDatabase database;
@@ -28,11 +38,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvContent;
     private Button btnFind;
     private EditText editletter;
-
     private String TAG = "TAG";
     private DrawerLayout mDrawerLayout;
     private Button btnLocal;
     private Button btnOnline;
+    private AudioManager manager;
+    private MediaPlayer turnUFKMusicDown;
+    Handler handler = new Handler();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        turnUFKMusicDown = MediaPlayer.create(this,R.raw.turnufkmusicdown);
+        turnUFKMusicDown.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//        循环
+//        turnUFKMusicDown.setLooping(true);
+//        使用线程
+        handler.postDelayed(runnable,1000);
+
         //        菜单项按钮显示
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -152,5 +172,38 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.mdr);
         btnLocal = (Button) findViewById(R.id.btnLocal);
         btnOnline = (Button) findViewById(R.id.btnOnline);
+    }
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                handler.postDelayed(this, 5000);
+                if (manager.isMusicActive()){
+                    Log.d(TAG, "设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                    if (manager.getStreamVolume(AudioManager.STREAM_MUSIC)>=10){
+                        manager.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                        Toast.makeText(getApplicationContext(), "TURN YOU FUCKING MUSIC DOWN!!!", Toast.LENGTH_LONG).show();
+                        turnUFKMusicDown.start();
+                    }
+                }else {
+                    Log.d(TAG, "no music and 设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        handler.postDelayed(runnable,1000);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(runnable);
+        turnUFKMusicDown.pause();
     }
 }
