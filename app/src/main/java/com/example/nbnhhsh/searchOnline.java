@@ -63,7 +63,14 @@ public class searchOnline extends AppCompatActivity {
 //        turnUFKMusicDown.setLooping(true);
 //        使用线程
         handler.postDelayed(runnable,1000);
-
+//        打开在线查询
+        btnOnline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(searchOnline.this,searchOnline.class);
+                startActivity(intent);
+            }
+        });
         //        本地查询
         btnLocal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,9 +98,7 @@ public class searchOnline extends AppCompatActivity {
 //                        测试json发送
 //                        RequestBody body = RequestBody.create(JSON, "{\"text\":\"hh\"}");
                         RequestBody body = RequestBody.create(JSON, getJSON);
-
                         String url = "https://lab.magiconch.com/api/nbnhhsh/guess";
-
                         Request request = new Request.Builder()
                                 .url(url)
                                 .post(body)
