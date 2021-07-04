@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private AudioManager manager;
     private MediaPlayer turnUFKMusicDown;
     Handler handler = new Handler();
+    EasterEggs easterEggs = new EasterEggs();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,16 +53,6 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main, menu);
         return true;
     }
-
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.action_add) {
-//            Intent intent = new Intent(MainActivity.this, Addtxt.class);
-//            startActivity(intent);
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,16 +169,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             try {
                 handler.postDelayed(this, 5000);
-                if (manager.isMusicActive()){
-                    Log.d(TAG, "设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
-                    if (manager.getStreamVolume(AudioManager.STREAM_MUSIC)>=10){
-                        manager.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-                        Toast.makeText(getApplicationContext(), "TURN YOU FUCKING MUSIC DOWN!!!", Toast.LENGTH_LONG).show();
-                        turnUFKMusicDown.start();
-                    }
-                }else {
-                    Log.d(TAG, "no music and 设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
-                }
+                easterEggs.play(manager,turnUFKMusicDown,getApplicationContext());
             }catch (Exception e){
                 e.printStackTrace();
             }

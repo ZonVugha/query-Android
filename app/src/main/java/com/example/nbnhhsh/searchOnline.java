@@ -147,16 +147,8 @@ public class searchOnline extends AppCompatActivity {
         public void run() {
             try {
                 handler.postDelayed(this, 1000);
-                if (manager.isMusicActive()){
-                    Log.d("TAG", "online 设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
-                    if (manager.getStreamVolume(AudioManager.STREAM_MUSIC)>=10){
-                        manager.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-                        Toast.makeText(getApplicationContext(), "TURN YOU FUCKING MUSIC DOWN!!!", Toast.LENGTH_LONG).show();
-                        turnUFKMusicDown.start();
-                    }
-                }else {
-                    Log.d("TAG", "online no music and 设备音量: "+manager.getStreamVolume(AudioManager.STREAM_MUSIC));
-                }
+                EasterEggs easterEggs = new EasterEggs();
+                easterEggs.play(manager,turnUFKMusicDown,getApplicationContext());
             }catch (Exception e){
                 e.printStackTrace();
             }
