@@ -59,9 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-        manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        turnUFKMusicDown = MediaPlayer.create(this,R.raw.turnufkmusicdown);
-        turnUFKMusicDown.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        setmusic();
 //        循环
 //        turnUFKMusicDown.setLooping(true);
 //        使用线程
@@ -161,7 +159,11 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "data number: " + result);
         }
     }
-
+    public void setmusic(){
+        manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        turnUFKMusicDown = MediaPlayer.create(this,R.raw.turnufkmusicdown);
+        turnUFKMusicDown.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
     private void initView() {
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvContent = (TextView) findViewById(R.id.tvContent);
@@ -186,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        setmusic();
         handler.postDelayed(runnable,1000);
     }
 

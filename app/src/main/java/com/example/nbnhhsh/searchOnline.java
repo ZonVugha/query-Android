@@ -55,10 +55,7 @@ public class searchOnline extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.more);
         }
         initView();
-        handler.postDelayed(runnable,1000);
-        manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        turnUFKMusicDown = MediaPlayer.create(this,R.raw.turnufkmusicdown);
-        turnUFKMusicDown.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        setmusic();
 //        循环
 //        turnUFKMusicDown.setLooping(true);
 //        使用线程
@@ -147,6 +144,11 @@ public class searchOnline extends AppCompatActivity {
         }
         return true;
     }
+    public void setmusic(){
+        manager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        turnUFKMusicDown = MediaPlayer.create(this,R.raw.turnufkmusicdown);
+        turnUFKMusicDown.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -162,6 +164,7 @@ public class searchOnline extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        setmusic();
         handler.postDelayed(runnable,1000);
     }
 
